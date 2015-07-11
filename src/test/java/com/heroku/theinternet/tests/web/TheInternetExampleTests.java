@@ -3,12 +3,10 @@ package com.heroku.theinternet.tests.web;
 import static com.google.common.truth.Truth.assertThat;
 
 import java.io.File;
-import java.util.Arrays;
 
+import com.frameworkium.annotations.Issue;
 import org.openqa.selenium.Keys;
 import org.testng.annotations.Test;
-
-import ru.yandex.qatools.allure.annotations.Issue;
 
 import com.frameworkium.tests.internal.BaseTest;
 import com.heroku.theinternet.pages.web.BasicAuthSuccessPage;
@@ -31,16 +29,18 @@ import com.heroku.theinternet.pages.web.SortableDataTablesPage;
 import com.heroku.theinternet.pages.web.WelcomePage;
 
 public class TheInternetExampleTests extends BaseTest {
-    
+
     @Issue("HEROKU-1")
     @Test(description = "Basic Auth")
     public void basicAuth() {
 
         // Navigate to the basic auth page
-        BasicAuthSuccessPage basicAuthSuccess = WelcomePage.open().then().clickBasicAuth("admin", "admin");
+        BasicAuthSuccessPage basicAuthSuccess =
+                WelcomePage.open().then().clickBasicAuth("admin", "admin");
 
         // Assert that the returned page has the text present
-        assertThat(basicAuthSuccess.getSource()).contains("Congratulations! You must have the proper credentials.");
+        assertThat(basicAuthSuccess.getSource())
+                .contains("Congratulations! You must have the proper credentials.");
     }
 
     @Issue("HEROKU-2")
@@ -54,8 +54,9 @@ public class TheInternetExampleTests extends BaseTest {
         checkboxesPage.checkAllCheckboxes();
 
         // Assert that all checkboxes are checked
-        assertThat(checkboxesPage.getAllCheckboxCheckedStatus()).named("check status of checkboxes").doesNotContain(
-                false);
+        assertThat(checkboxesPage.getAllCheckboxCheckedStatus())
+                .named("check status of checkboxes")
+                .doesNotContain(false);
     }
 
     @Issue("HEROKU-3")
@@ -69,8 +70,9 @@ public class TheInternetExampleTests extends BaseTest {
         dragAndDropPage.dragAontoB();
 
         // Assert on the order of the headings
-        assertThat(dragAndDropPage.getListOfHeadings()).named("Order of headings").containsSequence(
-                Arrays.asList("B", "A"));
+        assertThat(dragAndDropPage.getListOfHeadings())
+                .named("Order of headings")
+                .containsExactly("B", "A");
     }
 
     @Issue("HEROKU-4")
@@ -106,26 +108,20 @@ public class TheInternetExampleTests extends BaseTest {
     }
 
     @Issue("HEROKU-6")
-    @Test(description = "File Download")
+    @Test(description = "File Download", dependsOnMethods = "fileUpload")
     public void fileDownload() {
 
         // Navigate to the download page
         FileDownloadPage downloadPage = WelcomePage.open().then().clickFileDownloadLink();
 
-        // If you have the file
-        // File testFile = new File("/Users/robgates55/avatar.jpg");
-        // FileInputStream f = new FileInputStream(testFile.getAbsolutePath());
-        // int size = IOUtils.toByteArray(f).length;
-        // IOUtils.closeQuietly(f);
-
-        // Confirm that the avatar.jpg file in the list (as other people might be using it!)
-        assertThat(downloadPage.getDownloadableFileLinkNames()).contains("avatar.jpg");
+        // Confirm that the textfile.txt file in the list (as other people might be using it!)
+        assertThat(downloadPage.getDownloadableFileLinkNames()).contains("textfile.txt");
 
         // If you know the size to expect
-        int size = 7996;
+        int size = 0;
 
         // Confirm size of the downloaded file is as expected
-        assertThat(downloadPage.getSizeOfFile("avatar.jpg")).isEqualTo(size);
+        assertThat(downloadPage.getSizeOfFile("textfile.txt")).isEqualTo(size);
     }
 
     @Issue("HEROKU-7")
@@ -196,6 +192,7 @@ public class TheInternetExampleTests extends BaseTest {
         // Navigate to the javascript alerts page
         JavaScriptAlertsPage javascriptAlerts = WelcomePage.open().then().clickjavascriptAlertsLink();
 
+        // N.B. Mis-spelling of successfully is 'expected'
         javascriptAlerts.clickAlertButtonAndAccept();
         assertThat(javascriptAlerts.getResultText()).isEqualTo("You successfuly clicked an alert");
 
@@ -214,7 +211,7 @@ public class TheInternetExampleTests extends BaseTest {
 
     @Issue("HEROKU-12")
     @Test(description = "Key Presses")
-    public void keypresses() {
+    public void keyPresses() {
 
         // Navigate to the key presses page
         KeyPressesPage keyPressesPage = WelcomePage.open().then().clickKeyPressesLink();
@@ -243,19 +240,19 @@ public class TheInternetExampleTests extends BaseTest {
         // Navigate to the sortable data tables page
         SortableDataTablesPage sortableDataTablesPage =
                 WelcomePage.open().then().clickSortableDataTablesLink();
- 
+
         //Assert that Table 1 contains "http://www.jdoe.com" in the web site column
-        assertThat(sortableDataTablesPage.getTable1ColumnContents("Web Site")).contains("http://www.jdoe.com");
-        
+        assertThat(sortableDataTablesPage.getTable1ColumnContents("Web Site"))
+                .contains("http://www.jdoe.com");
+
         //Sort Table 2 by last name column
         sortableDataTablesPage.sortTable2ByColumnName("Last Name");
-        
+
         //Confirm that the column is then ordered by the last name
-        assertThat(sortableDataTablesPage.getTable2ColumnContents("Last Name")).isOrdered();
-        
+        assertThat(sortableDataTablesPage.getTable2ColumnContents("Last Name"))
+                .isStrictlyOrdered();
+
         //Confirm that "Bach" is then the first surname in table 2
         assertThat(sortableDataTablesPage.getTable2ColumnContents("Last Name").get(0)).isEqualTo("Bach");
-
-     
     }
 }

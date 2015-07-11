@@ -13,8 +13,6 @@ import org.openqa.selenium.remote.Augmenter;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
-import ru.yandex.qatools.allure.annotations.Attachment;
-
 import com.frameworkium.config.SystemProperty;
 import com.frameworkium.tests.internal.BaseTest;
 
@@ -41,7 +39,6 @@ public class ScreenshotListener extends TestListenerAdapter {
         return fileCreated;
     }
     
-    @Attachment(value = "Screenshot on failure", type = "image/png")
     private byte[] writeScreenshotToFile(WebDriver driver, File screenshot) {
         try {
             FileOutputStream screenshotStream = new FileOutputStream(screenshot);

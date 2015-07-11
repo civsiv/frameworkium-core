@@ -6,9 +6,6 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import ru.yandex.qatools.allure.annotations.Step;
-import ru.yandex.qatools.htmlelements.annotations.Name;
-
 import com.frameworkium.pages.internal.BasePage;
 import com.frameworkium.pages.internal.Visible;
 import com.jayway.restassured.RestAssured;
@@ -26,17 +23,14 @@ public class DragAndDropPage extends BasePage<DragAndDropPage> {
             + "rcorreia/2362544/raw/3319e506e204af262d27f7ff9fca311e693dc342/" + "drag_and_drop_helper.js";
 
     @Visible
-    @Name("Box A")
     @FindBy(id = "column-a")
     private WebElement boxA;
 
     @Visible
-    @Name("Box B")
     @FindBy(id = "column-b")
     private WebElement boxB;
 
     @Visible
-    @Name("List of headers")
     @FindBy(css = "header")
     private List<WebElement> boxes;
 
@@ -71,19 +65,16 @@ public class DragAndDropPage extends BasePage<DragAndDropPage> {
         executeJS("$('" + from + "').simulateDragDrop({ dropTarget: '" + to + "'});");
     }
 
-    @Step("Drag A onto B")
     public DragAndDropPage dragAontoB() {
         simulateDragAndDrop("#column-a", "#column-b");
         return this;
     }
 
-    @Step("Drag B onto A")
     public DragAndDropPage dragBontoA() {
         simulateDragAndDrop("#column-b", "#column-a");
         return this;
     }
 
-    @Step("Get order of headers")
     public List<String> getListOfHeadings() {
         List<String> headings = new ArrayList<String>();
         for (WebElement box : boxes) {
@@ -91,5 +82,4 @@ public class DragAndDropPage extends BasePage<DragAndDropPage> {
         }
         return headings;
     }
-
 }

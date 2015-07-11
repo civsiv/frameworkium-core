@@ -18,7 +18,8 @@ import com.jayway.restassured.path.json.JsonPath;
 
 public class Test {
 
-    private final static AuthenticationScheme auth = preemptive().basic(Config.jiraUsername, Config.jiraPassword);
+    private final static AuthenticationScheme auth = 
+        preemptive().basic(Config.jiraUsername, Config.jiraPassword);
     private final static String jiraAPIURI = JIRA_URL.getValue() + Config.jiraRestURI;
 
     protected final String issueKey; // Jira Key e.g. KT-123
@@ -36,7 +37,6 @@ public class Test {
         JSONArray setArr = new JSONArray();
         JSONObject valueObj = new JSONObject();
 
-
         try {
             obj.put("update", fieldObj);
             fieldObj.put(getFieldId(fieldToUpdate), setArr);
@@ -53,7 +53,8 @@ public class Test {
 
         System.out.print(obj.toString());
         
-        given().contentType("application/json").and().body(obj.toString()).then().put("/issue/" + issueKey);
+        given().contentType("application/json").and()
+            .body(obj.toString()).then().put("/issue/" + issueKey);
     }
     
     public static void addComment(final String issueKey, final String commentToAdd) {
@@ -68,7 +69,8 @@ public class Test {
         RestAssured.baseURI = jiraAPIURI;
         RestAssured.authentication = auth;
 
-        given().contentType("application/json").and().body(obj.toString()).then().post("/issue/" + issueKey + "/comment");
+        given().contentType("application/json").and()
+            .body(obj.toString()).then().post("/issue/" + issueKey + "/comment");
     }
     
     public static String getFieldId(final String fieldName) {
@@ -85,7 +87,8 @@ public class Test {
         RestAssured.authentication = auth;
         
         JsonPath jsonPath = get("/issue/" + issueKey + "?expand=transitions.fields").andReturn().jsonPath();
-        return Integer.parseInt(jsonPath.getString(String.format("transitions.find {it -> it.name == '%s'}.id", transitionName)));
+        return Integer.parseInt(jsonPath.getString(
+            String.format("transitions.find {it -> it.name == '%s'}.id", transitionName)));
     }
     
     public static void transitionIssue(final String issueKey, final String transitionName) {
@@ -108,6 +111,7 @@ public class Test {
         RestAssured.baseURI = jiraAPIURI;
         RestAssured.authentication = auth;
 
-        given().contentType("application/json").and().body(obj.toString()).then().post("/issue/" + issueKey + "/transitions");
+        given().contentType("application/json").and()
+            .body(obj.toString()).then().post("/issue/" + issueKey + "/transitions");
     }
 }

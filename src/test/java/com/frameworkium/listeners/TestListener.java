@@ -7,8 +7,6 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
-import ru.yandex.qatools.allure.annotations.Step;
-
 public class TestListener implements ITestListener {
 
     static final Logger logger = LogManager.getLogger(TestListener.class);
@@ -51,11 +49,8 @@ public class TestListener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {}
     
-    @Step("{0}")
     private void stepLogger(String toLog)
     {
         logger.info(toLog);
     }
-    
-    
 }

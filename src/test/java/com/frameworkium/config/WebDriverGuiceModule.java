@@ -8,11 +8,11 @@ import com.google.inject.AbstractModule;
 
 /** Guice module for WebDriver injection. */
 public class WebDriverGuiceModule extends AbstractModule {
+
     @Override
     protected final void configure() {
         WebDriver driver = BaseTest.getDriver();
         bind(WebDriver.class).toInstance(driver);
         bind(WebDriverWait.class).toInstance(new WebDriverWait(driver, 10));
     }
-
 }
