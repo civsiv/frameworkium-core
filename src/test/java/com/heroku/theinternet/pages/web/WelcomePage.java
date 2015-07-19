@@ -46,6 +46,10 @@ public class WelcomePage extends BasePage<WelcomePage> {
     private WebElement hoversLink;
 
     @Visible
+    @FindBy(linkText = "Frames")
+    private WebElement framesLink;
+
+    @Visible
     @FindBy(linkText = "JQuery UI Menus")
     private WebElement jqueryUILink;
 
@@ -74,7 +78,8 @@ public class WelcomePage extends BasePage<WelcomePage> {
         // For this sort of authentication, Selenium cannot handle the dialog
         // box that appears if you click the link.
         // Instead, we can provide the username and password in the URL:
-        return PageFactory.newInstance(BasicAuthSuccessPage.class, "http://" + username + ":" + password + "@"
+        return PageFactory.newInstance(BasicAuthSuccessPage.class,
+                "http://" + username + ":" + password + "@"
                 + basicAuthLink.getAttribute("href").split("http://")[1]);
     }
 
@@ -111,6 +116,11 @@ public class WelcomePage extends BasePage<WelcomePage> {
     public FormAuthenticationPage clickFormAuthenticationLink() {
         formAuthenticationLink.click();
         return PageFactory.newInstance(FormAuthenticationPage.class);
+    }
+
+    public FramesPage clickFramesLink() {
+        framesLink.click();
+        return PageFactory.newInstance(FramesPage.class);
     }
 
     public HoversPage clickHoversLink() {
