@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import com.frameworkium.annotations.Issue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -91,7 +91,11 @@ public abstract class BaseTest {
     @BeforeMethod(alwaysRun = true)
     public void initialiseNewScreenshotCapture(Method testMethod) {
         if (ScreenshotCapture.isRequired()) {
-            String testID = StringUtils.EMPTY;
+            String testID = "n/a";
+            try {
+                testID = testMethod.getAnnotation(Issue.class).value();
+            } catch (NullPointerException e) {}
+            
             capture.set(new ScreenshotCapture(testID, driver.get()));
         }
     }

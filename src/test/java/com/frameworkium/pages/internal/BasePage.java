@@ -52,7 +52,7 @@ public abstract class BasePage<T extends BasePage<T>> {
             try{
                 if (SystemProperty.CAPTURE_URL.isSpecified()) {
                     BaseTest.getCapture().takeAndSendScreenshot(
-                        new Command("load", null, null), driver, null);
+                        new Command("load", null, this.getClass().getName()), driver, null);
                 }
             } catch (Exception e){
                 logger.error("Error logging page load, but loaded successfully");
