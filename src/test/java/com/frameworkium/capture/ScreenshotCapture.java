@@ -55,13 +55,12 @@ public class ScreenshotCapture {
 
     private void initExecution(CreateExecution createExecutionMessage) {
 
-        String uri = SystemProperty.CAPTURE_URL.getValue() + "/execution";
+        String uri = SystemProperty.CAPTURE_URL.getValue() + "/executions";
         executionID =
                 RestAssured.given().contentType(ContentType.JSON)
-                        .body(createExecutionMessage).when()
-                        .post(uri).then()
-                        .extract().path("executionID").toString();
-        logger.info("executionID = " + executionID);
+                        .body(createExecutionMessage).post(uri)
+                        .then().extract().path("executionID").toString();
+        logger.debug("executionID=" + executionID);
     }
 
     private String getNode(WebDriver webdriver) {
