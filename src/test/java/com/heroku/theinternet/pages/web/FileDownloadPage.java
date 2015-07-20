@@ -24,10 +24,6 @@ public class FileDownloadPage extends BasePage<FileDownloadPage> {
     @FindBy(css = "div.example a:first-of-type")
     private WebElement firstDownloadWebElement;
 
-    public long getSizeOfFirstFile() {
-        return getSizeOfFileAtURL(firstDownloadWebElement.getAttribute("href"));
-    }
-
     public List<String> getDownloadableFileLinkNames() {
 
         return allDownloadWebElements.stream()
