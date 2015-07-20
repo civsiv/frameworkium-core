@@ -115,8 +115,7 @@ public abstract class BaseTest {
         String ua;
         try {
             ua = (String) getDriver().executeScript("return navigator.userAgent;");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ua = "Unable to fetch UserAgent";
         }
         logger.debug("User agent is: '" + ua + "'");

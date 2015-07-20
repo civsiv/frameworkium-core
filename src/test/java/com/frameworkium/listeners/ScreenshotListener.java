@@ -38,7 +38,7 @@ public class ScreenshotListener extends TestListenerAdapter {
 
         return fileCreated;
     }
-    
+
     private byte[] writeScreenshotToFile(WebDriver driver, File screenshot) {
         try {
             FileOutputStream screenshotStream = new FileOutputStream(screenshot);
@@ -54,23 +54,30 @@ public class ScreenshotListener extends TestListenerAdapter {
     }
 
     private void takeScreenshot(String testName) throws Exception {
-        String screenshotDirectory = System.getProperty("screenshotDirectory");
-        if (null == screenshotDirectory) {
-            screenshotDirectory = "screenshots";
-        }
-        String absolutePath =
-                screenshotDirectory + File.separator + System.currentTimeMillis() + "_" + testName + ".png";
-        File screenshot = new File(absolutePath);
-        if (createFile(screenshot)) {
-            WebDriver driver = BaseTest.getDriver();
+        // Take a local screenshot if capture is not enabled
+        if (!SystemProperty.CAPTURE_URL.isSpecified()) {
             try {
-                writeScreenshotToFile(driver, screenshot);
-            } catch (ClassCastException weNeedToAugmentOurDriverObject) {
-                writeScreenshotToFile(new Augmenter().augment(driver), screenshot);
+                String screenshotDirectory = System.getProperty("screenshotDirectory");
+                if (null == screenshotDirectory) {
+                    screenshotDirectory = "screenshots";
+                }
+                String absolutePath =
+                        screenshotDirectory + File.separator + System.currentTimeMillis() + "_" + testName + ".png";
+                File screenshot = new File(absolutePath);
+                if (createFile(screenshot)) {
+                    WebDriver driver = BaseTest.getDriver();
+                    try {
+                        writeScreenshotToFile(driver, screenshot);
+                    } catch (ClassCastException weNeedToAugmentOurDriverObject) {
+                        writeScreenshotToFile(new Augmenter().augment(driver), screenshot);
+                    }
+                    logger.info("Written screenshot to " + absolutePath);
+                } else {
+                    logger.error("Unable to create " + absolutePath);
+                }
+            } catch (Exception e) {
+                logger.error("Unable to take screenshot - " + e);
             }
-            logger.info("Written screenshot to " + absolutePath);
-        } else {
-            logger.error("Unable to create " + absolutePath);
         }
     }
 
@@ -85,7 +92,7 @@ public class ScreenshotListener extends TestListenerAdapter {
             }
         }
     }
-    
+
     @Override
     public void onTestSkipped(ITestResult skippedTest) {
         try {

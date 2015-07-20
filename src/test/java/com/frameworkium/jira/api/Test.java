@@ -30,7 +30,8 @@ public class Test {
         this.issueKey = issue;
     }
 
-    public static void changeIssueFieldValue(final String issueKey, final String fieldToUpdate, final String resultValue) {
+    public static void changeIssueFieldValue(
+            final String issueKey, final String fieldToUpdate, final String resultValue) {
         JSONObject obj = new JSONObject();
         JSONObject fieldObj = new JSONObject();
         JSONObject setObj = new JSONObject();
@@ -51,10 +52,9 @@ public class Test {
         RestAssured.baseURI = jiraAPIURI;
         RestAssured.authentication = auth;
 
-        System.out.print(obj.toString());
-        
-        given().contentType("application/json").and()
-            .body(obj.toString()).then().put("/issue/" + issueKey);
+        given().contentType("application/json")
+                .and().body(obj.toString())
+                .then().put("/issue/" + issueKey);
     }
     
     public static void addComment(final String issueKey, final String commentToAdd) {
@@ -69,8 +69,9 @@ public class Test {
         RestAssured.baseURI = jiraAPIURI;
         RestAssured.authentication = auth;
 
-        given().contentType("application/json").and()
-            .body(obj.toString()).then().post("/issue/" + issueKey + "/comment");
+        given().contentType("application/json")
+                .and().body(obj.toString())
+                .then().post("/issue/" + issueKey + "/comment");
     }
     
     public static String getFieldId(final String fieldName) {

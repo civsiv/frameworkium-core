@@ -28,16 +28,16 @@ public class ResultLoggerListener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        
-        if(!getIssueAnnotation(result).isEmpty()) {
+
+        if (!getIssueAnnotation(result).isEmpty()) {
 
             String comment = String.format("Starting %s.%s", result.getTestClass().getName(), result.getMethod().getMethodName());
 
             if (zapiLoggingParamsProvided(result)) {
                 logger.info("Logging WIP to zapi");
                 new Execution(ZAPI_RESULT_VERSION.getValue(), getIssueAnnotation(result)).update(
-                            Config.ZAPI_STATUS.ZAPI_STATUS_WIP, comment, null);
-                    
+                        Config.ZAPI_STATUS.ZAPI_STATUS_WIP, comment, null);
+
             }
             if (jiraTransitionLoggingParamsProvided(result)) {
                 logger.info("Logging WIP to Jira using issue transitions");
@@ -49,7 +49,7 @@ public class ResultLoggerListener implements ITestListener {
                 logger.info("Logging WIP to jira by updating the specified field - " + JIRA_RESULT_FIELDNAME.getValue());
                 Test.changeIssueFieldValue(getIssueAnnotation(result), JIRA_RESULT_FIELDNAME.getValue(), Config.JIRA_FIELD_STATUS.JIRA_STATUS_WIP);
                 Test.addComment(getIssueAnnotation(result), comment);
-            
+
             }
         }
     }
@@ -58,7 +58,7 @@ public class ResultLoggerListener implements ITestListener {
         for (String jiraTransition : jiraTransitions)
         {
             try {
-                Test.transitionIssue(issueAnnotation,jiraTransition);
+                Test.transitionIssue(issueAnnotation, jiraTransition);
                 logger.debug("Performed transition '" + jiraTransition + "' on '" + issueAnnotation + "'");
             }
             catch(Exception e){
@@ -70,28 +70,25 @@ public class ResultLoggerListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        
+
         if (!getIssueAnnotation(result).isEmpty()) {
-            
+
             String comment = "PASS" + System.lineSeparator() + this.baseComment(result);
 
             if (zapiLoggingParamsProvided(result)) {
                 logger.info("Logging PASS to zapi");
                 new Execution(ZAPI_RESULT_VERSION.getValue(), getIssueAnnotation(result)).update(
-                            Config.ZAPI_STATUS.ZAPI_STATUS_PASS, comment, null);
-                    
+                        Config.ZAPI_STATUS.ZAPI_STATUS_PASS, comment, null);
             }
             if (jiraTransitionLoggingParamsProvided(result)) {
                 logger.info("Logging PASS to Jira using issue transitions");
                 moveThroughTransitions(getIssueAnnotation(result),Config.JIRA_TRANSITION.JIRA_TRANSITION_PASS);
                 Test.addComment(getIssueAnnotation(result), comment);
-
             }
             if (jiraFieldLoggingParamsProvided(result)) {
                 logger.info("Logging PASS to jira by updating the specified field - " + JIRA_RESULT_FIELDNAME.getValue());
                 Test.changeIssueFieldValue(getIssueAnnotation(result), JIRA_RESULT_FIELDNAME.getValue(), Config.JIRA_FIELD_STATUS.JIRA_STATUS_PASS);
                 Test.addComment(getIssueAnnotation(result), comment);
-            
             }
         }
     }
@@ -103,61 +100,54 @@ public class ResultLoggerListener implements ITestListener {
             markAsBlocked(result);
         }
         else {
-            if(!getIssueAnnotation(result).isEmpty()) {
-                
+            if (!getIssueAnnotation(result).isEmpty()) {
+
                 String comment = "FAIL" + System.lineSeparator() + this.baseComment(result);
 
                 if (zapiLoggingParamsProvided(result)) {
                     logger.info("Logging FAIL to zapi");
                     new Execution(ZAPI_RESULT_VERSION.getValue(), getIssueAnnotation(result)).update(
-                                Config.ZAPI_STATUS.ZAPI_STATUS_FAIL, comment, null);
-                        
+                            Config.ZAPI_STATUS.ZAPI_STATUS_FAIL, comment, null);
                 }
                 if (jiraTransitionLoggingParamsProvided(result)) {
                     logger.info("Logging FAIL to Jira using issue transitions");
                     moveThroughTransitions(getIssueAnnotation(result),Config.JIRA_TRANSITION.JIRA_TRANSITION_FAIL);
                     Test.addComment(getIssueAnnotation(result), comment);
-
                 }
                 if (jiraFieldLoggingParamsProvided(result)) {
                     logger.info("Logging FAIL to jira by updating the specified field - " + JIRA_RESULT_FIELDNAME.getValue());
                     Test.changeIssueFieldValue(getIssueAnnotation(result), JIRA_RESULT_FIELDNAME.getValue(), Config.JIRA_FIELD_STATUS.JIRA_STATUS_FAIL);
                     Test.addComment(getIssueAnnotation(result), comment);
-                
                 }
             }
         }
-   
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
         markAsBlocked(result);
     }
-    
+
     private void markAsBlocked(ITestResult result) {
-        
-        if(!getIssueAnnotation(result).isEmpty()) {
-            
+
+        if (!getIssueAnnotation(result).isEmpty()) {
+
             String comment = "BLOCKED" + System.lineSeparator() + this.baseComment(result);
 
             if (zapiLoggingParamsProvided(result)) {
                 logger.info("Logging BLOCKED to zapi");
                 new Execution(ZAPI_RESULT_VERSION.getValue(), getIssueAnnotation(result)).update(
-                            Config.ZAPI_STATUS.ZAPI_STATUS_BLOCKED, comment, null);
-                    
+                        Config.ZAPI_STATUS.ZAPI_STATUS_BLOCKED, comment, null);
             }
             if (jiraTransitionLoggingParamsProvided(result)) {
                 logger.info("Logging BLOCKED to Jira using issue transitions");
                 moveThroughTransitions(getIssueAnnotation(result),Config.JIRA_TRANSITION.JIRA_TRANSITION_BLOCKED);
                 Test.addComment(getIssueAnnotation(result), comment);
-
             }
             if (jiraFieldLoggingParamsProvided(result)) {
                 logger.info("Logging BLOCKED to jira by updating the specified field - " + JIRA_RESULT_FIELDNAME.getValue());
                 Test.changeIssueFieldValue(getIssueAnnotation(result), JIRA_RESULT_FIELDNAME.getValue(), Config.JIRA_FIELD_STATUS.JIRA_STATUS_BLOCKED);
                 Test.addComment(getIssueAnnotation(result), comment);
-            
             }
         }
     }
@@ -178,11 +168,11 @@ public class ResultLoggerListener implements ITestListener {
     private Boolean jiraTransitionLoggingParamsProvided(ITestResult result) {
         return JIRA_URL.isSpecified() && JIRA_RESULT_TRANSITION.isSpecified() && !getIssueAnnotation(result).isEmpty();
     }
-    
+
     private Boolean jiraFieldLoggingParamsProvided(ITestResult result) {
         return JIRA_URL.isSpecified() && JIRA_RESULT_FIELDNAME.isSpecified() && !getIssueAnnotation(result).isEmpty();
     }
-    
+
     private String getIssueAnnotation(ITestResult result) {
         String annotation = StringUtils.EMPTY;
         try {
@@ -192,11 +182,11 @@ public class ResultLoggerListener implements ITestListener {
         }
         return annotation;
     }
-    
+
     private String getOSInfo() {
         return System.getProperty("os.name") + " - " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
     }
-    
+
     private String getStackTraceFromThrowable(Throwable cause) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -204,32 +194,37 @@ public class ResultLoggerListener implements ITestListener {
         cause.printStackTrace(pw);
         return sw.getBuffer().toString();
     }
-    
+
     private String baseComment(ITestResult result) {
-        
+
         StringBuilder comment = new StringBuilder();
 
         comment.append(String.format("Test: %s.%s", result.getTestClass().getName(), result.getMethod().getMethodName()));
         comment.append(System.lineSeparator());
         comment.append(String.format("Duration: %s seconds", ((result.getEndMillis() - result.getStartMillis()) / 1000)));
         comment.append(System.lineSeparator());
-        if(System.getenv("BUILD_URL") != null) {
-            comment.append("Jenkins build: " + System.getenv("BUILD_URL"));
+        if (System.getenv("BUILD_URL") != null) {
+            comment.append("Jenkins build: ");
+            comment.append(System.getenv("BUILD_URL"));
             comment.append(System.lineSeparator());
         }
-        if(CAPTURE_URL.isSpecified()) {
-        //    comment.append("Capture: " + BaseTest.getCapture().toString());
+        if (CAPTURE_URL.isSpecified()) {
+            comment.append("Capture API: ");
+            comment.append(CAPTURE_URL.getValue());
             comment.append(System.lineSeparator());
         }
-        comment.append("OS: " + this.getOSInfo());
+        comment.append("OS: ");
+        comment.append(getOSInfo());
         comment.append(System.lineSeparator());
-        comment.append("UserAgent: " + BaseTest.userAgent);
-        if(result.getThrowable() != null) {
+        comment.append("UserAgent: ");
+        comment.append(BaseTest.userAgent);
+        if (result.getThrowable() != null) {
             comment.append(System.lineSeparator());
-            comment.append("Stacktrace: " + this.getStackTraceFromThrowable(result.getThrowable()));
+            comment.append("Stacktrace: ");
+            comment.append(getStackTraceFromThrowable(result.getThrowable()));
         }
 
         return comment.toString();
-        
+
     }
 }

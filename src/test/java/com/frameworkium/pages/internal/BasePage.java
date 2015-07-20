@@ -30,13 +30,19 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     protected final Logger logger = LogManager.getLogger(this);
 
-    /** @return Returns the current page object. Useful for e.g. MyPage.get().then().doSomething(); */
+    /**
+     * @return Returns the current page object.
+     * Useful for e.g. MyPage.get().then().doSomething();
+     */
     @SuppressWarnings("unchecked")
     public T then() {
         return (T) this;
     }
 
-    /** @return Returns the current page object. Useful for e.g. MyPage.get().then().with().aComponent().clickHome(); */
+    /**
+     * @return Returns the current page object.
+     * Useful for e.g. MyPage.get().then().with().aComponent().clickHome();
+     */
     @SuppressWarnings("unchecked")
     public T with() {
         return (T) this;
@@ -68,47 +74,50 @@ public abstract class BasePage<T extends BasePage<T>> {
         return get();
     }
 
-    private void waitForExpectedVisibleElements(Object pageObject) 
-        throws IllegalArgumentException, IllegalAccessException {
+    private void waitForExpectedVisibleElements(Object pageObject)
+            throws IllegalArgumentException, IllegalAccessException
+    {
         waitForExpectedVisibleElements(pageObject, StringUtils.EMPTY);
     }
     
-    private void waitForExpectedVisibleElements(
-        Object pageObject, String visibleGroupName)
-        throws IllegalArgumentException, IllegalAccessException
+    private void waitForExpectedVisibleElements(Object pageObject, String visibleGroupName)
+            throws IllegalArgumentException, IllegalAccessException
     {
         for (Field field : pageObject.getClass().getDeclaredFields()) {
             for (Annotation annotation : field.getDeclaredAnnotations()) {
                 if (annotation instanceof Visible) {
                     // If the group name matches, then check for visibility
-                    if (((Visible) annotation).value().equalsIgnoreCase(visibleGroupName)) {
+                    String currentVisibleGroupName = ((Visible) annotation).value();
+                    if (currentVisibleGroupName.equalsIgnoreCase(visibleGroupName)) {
                         field.setAccessible(true);
-                        Object obj = field.get(pageObject);
-    
-                        // This handles Lists of WebElements e.g. List<WebElement>
-                        if (obj instanceof List) {
-                            try {
-                                wait.until(ExpectedConditions.visibilityOfAllElements((List<WebElement>) obj));
-                            } catch (StaleElementReferenceException serex) {
-                                logger.info("Caught StaleElementReferenceException");
-                                tryToEnsureWeHaveUnloadedOldPageAndNewPageIsReady();
-                                wait.until(ExpectedConditions.visibilityOfAllElements((List<WebElement>) obj));
-                            } catch (ClassCastException ccex) {
-                                logger.debug("Caught ClassCastException - will try to get the first object in the List instead");
-                                obj = ((List<Object>) obj).get(0);
-                                waitForObjectToBeVisible(obj);
-                            }
-                        }
-                        // Otherwise, it's a single object - WebElement
-                        else {
-                            waitForObjectToBeVisible(obj);
-                        }
+                        checkForVisibility(field.get(pageObject));
                     }
                 }
             }
         }
     }
-    
+
+    private void checkForVisibility(Object obj) throws IllegalAccessException {
+        // This handles Lists of WebElements e.g. List<WebElement>
+        if (obj instanceof List) {
+            try {
+                wait.until(ExpectedConditions.visibilityOfAllElements((List<WebElement>) obj));
+            } catch (StaleElementReferenceException serex) {
+                logger.info("Caught StaleElementReferenceException");
+                tryToEnsureWeHaveUnloadedOldPageAndNewPageIsReady();
+                wait.until(ExpectedConditions.visibilityOfAllElements((List<WebElement>) obj));
+            } catch (ClassCastException ccex) {
+                logger.debug("Caught ClassCastException - will try to get the first object in the List instead");
+                obj = ((List<Object>) obj).get(0);
+                waitForObjectToBeVisible(obj);
+            }
+        }
+        // Otherwise, it's a single object - WebElement
+        else {
+            waitForObjectToBeVisible(obj);
+        }
+    }
+
     private void waitForObjectToBeVisible(Object obj) 
         throws IllegalArgumentException, IllegalAccessException 
     {

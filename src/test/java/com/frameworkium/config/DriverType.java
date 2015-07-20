@@ -2,13 +2,10 @@ package com.frameworkium.config;
 
 import static com.frameworkium.config.SystemProperty.APP_PATH;
 import static com.frameworkium.config.SystemProperty.BROWSER_VERSION;
-import static com.frameworkium.config.SystemProperty.BUILD;
 import static com.frameworkium.config.SystemProperty.DEVICE;
 import static com.frameworkium.config.SystemProperty.GRID_URL;
 import static com.frameworkium.config.SystemProperty.PLATFORM;
-import static com.frameworkium.config.SystemProperty.PLATFORM_VERSION;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -28,7 +25,6 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.safari.SafariDriver;
 
 import com.frameworkium.capture.ScreenshotCapture;
 import com.frameworkium.listeners.CaptureListener;
@@ -52,19 +48,19 @@ public enum DriverType implements DriverSetup {
         public DesiredCapabilities getDesiredCapabilities() {
             DesiredCapabilities capabilities = DesiredCapabilities.chrome();
             capabilities.setCapability("chrome.switches", Arrays.asList("--no-default-browser-check"));
-            HashMap<String, String> chromePreferences = new HashMap<String, String>();
+            HashMap<String, String> chromePreferences = new HashMap<>();
             chromePreferences.put("profile.password_manager_enabled", "false");
             capabilities.setCapability("chrome.prefs", chromePreferences);
-            
-            //Use Chrome's built in device emulators
-            //Specify browser=chrome, but also provide device name to use chrome's emulator
-            if(DEVICE.isSpecified()){
-                Map<String, String> mobileEmulation = new HashMap<String, String>();
+
+            // Use Chrome's built in device emulators
+            // Specify browser=chrome, but also provide device name to use chrome's emulator
+            if (DEVICE.isSpecified()) {
+                Map<String, String> mobileEmulation = new HashMap<>();
                 mobileEmulation.put("deviceName", DEVICE.getValue());
-    
-                Map<String, Object> chromeOptions = new HashMap<String, Object>();
+
+                Map<String, Object> chromeOptions = new HashMap<>();
                 chromeOptions.put("mobileEmulation", mobileEmulation);
-                
+
                 capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
             }
             return capabilities;
@@ -96,7 +92,7 @@ public enum DriverType implements DriverSetup {
             DesiredCapabilities capabilities = DesiredCapabilities.phantomjs();
             capabilities.setCapability("takesScreenshot", true);
             capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
-                    new String[] {"--webdriver-loglevel=NONE"});
+                    new String[]{"--webdriver-loglevel=NONE"});
             return capabilities;
         }
 
@@ -123,35 +119,6 @@ public enum DriverType implements DriverSetup {
 
     private final static Logger logger = LogManager.getLogger(DriverType.class);
 
-    public WebDriver instantiateWebDriver() throws MalformedURLException {
-        DesiredCapabilities desiredCapabilities = getDesiredCapabilities();
-
-        //If remote
-        if (useRemoteWebDriver) {
-            URL seleniumGridURL = new URL(GRID_URL.getValue());
-
-            //Otherwise, try setting just platform and browser version
-            if (PLATFORM.isSpecified()) {
-                desiredCapabilities.setPlatform(Platform.valueOf(PLATFORM.getValue().toUpperCase()));
-            }
-
-            if (BROWSER_VERSION.isSpecified()) {
-                desiredCapabilities.setVersion(BROWSER_VERSION.getValue());
-            }
-            
-            //Return non-mobile remote driver
-            return new RemoteWebDriver(seleniumGridURL, desiredCapabilities);
-        }
-        //Otherwise, return the right kind of local driver
-        else {
-            if (isMobile()) {
-                throw new IllegalArgumentException("seleniumGridURL, sauce, or browserstack must be specified when running via Appium.");
-            } else {
-                return getWebDriverObject(desiredCapabilities);
-            }
-        }
-    }
-
     public static DriverType determineEffectiveDriverType() {
         DriverType driverType = defaultDriverType;
         try {
@@ -169,12 +136,50 @@ public enum DriverType implements DriverSetup {
         return driverType;
     }
 
+    public static boolean isMobile() {
+        return "ios".equalsIgnoreCase(PLATFORM.getValue()) ||
+                "android".equalsIgnoreCase(PLATFORM.getValue());
+    }
+
+    public static boolean isNative() {
+        return APP_PATH.isSpecified();
+    }
+
+    public WebDriver instantiateWebDriver() throws MalformedURLException {
+        DesiredCapabilities desiredCapabilities = getDesiredCapabilities();
+
+        if (useRemoteWebDriver) {
+            URL seleniumGridURL = new URL(GRID_URL.getValue());
+
+            // Otherwise, try setting just platform and browser version
+            if (PLATFORM.isSpecified()) {
+                desiredCapabilities.setPlatform(Platform.valueOf(PLATFORM.getValue().toUpperCase()));
+            }
+
+            if (BROWSER_VERSION.isSpecified()) {
+                desiredCapabilities.setVersion(BROWSER_VERSION.getValue());
+            }
+
+            // Return non-mobile remote driver
+            return new RemoteWebDriver(seleniumGridURL, desiredCapabilities);
+        }
+        // Otherwise, return the right kind of local driver
+        else {
+            if (isMobile()) {
+                throw new IllegalArgumentException(
+                        "seleniumGridURL, sauce, or browserstack must be specified when running via Appium.");
+            } else {
+                return getWebDriverObject(desiredCapabilities);
+            }
+        }
+    }
+
     public WebDriverWrapper instantiate() {
         logger.info("Current Browser Selection: " + this);
 
         DesiredCapabilities caps = getDesiredCapabilities();
         logger.info("Caps: " + caps.toString());
-        
+
         try {
             WebDriver driver = instantiateWebDriver();
             WebDriverWrapper eventFiringWD = new WebDriverWrapper(driver);
@@ -186,14 +191,6 @@ public enum DriverType implements DriverSetup {
         } catch (MalformedURLException urlIsInvalid) {
             throw new RuntimeException(urlIsInvalid);
         }
-    }
-
-    public static boolean isMobile() {
-        return "ios".equalsIgnoreCase(PLATFORM.getValue()) || "android".equalsIgnoreCase(PLATFORM.getValue());
-    }
-
-    public static boolean isNative() {
-        return APP_PATH.isSpecified();
     }
 
 }

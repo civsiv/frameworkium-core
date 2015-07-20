@@ -33,7 +33,8 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        logger.error(String.format("SKIP %s.%s", result.getTestClass().getName(), result.getMethod().getMethodName()));
+        logger.error(String.format(
+                "SKIP %s.%s", result.getTestClass().getName(), result.getMethod().getMethodName()));
         Throwable cause = result.getThrowable();
         if (cause != null && SkipException.class.isAssignableFrom(cause.getClass())) {
             logger.error(cause.getMessage());
@@ -41,16 +42,18 @@ public class TestListener implements ITestListener {
     }
 
     @Override
-    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {}
+    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
+    }
 
     @Override
-    public void onStart(ITestContext context) {}
+    public void onStart(ITestContext context) {
+    }
 
     @Override
-    public void onFinish(ITestContext context) {}
-    
-    private void stepLogger(String toLog)
-    {
+    public void onFinish(ITestContext context) {
+    }
+
+    private void stepLogger(String toLog) {
         logger.info(toLog);
     }
 }
