@@ -1,7 +1,7 @@
 package com.heroku.theinternet.pages.web;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -18,9 +18,12 @@ import com.jayway.restassured.RestAssured;
  */
 public class DragAndDropPage extends BasePage<DragAndDropPage> {
 
-    private static final String JQUERY_JS_URI = "http://code.jquery.com/jquery-1.11.2.min.js";
-    private static final String DRAG_DROP_HELPER_JS_URI = "https://gist.githubusercontent.com/"
-            + "rcorreia/2362544/raw/3319e506e204af262d27f7ff9fca311e693dc342/" + "drag_and_drop_helper.js";
+    private static final String JQUERY_JS_URI =
+            "http://code.jquery.com/jquery-1.11.2.min.js";
+    private static final String DRAG_DROP_HELPER_JS_URI =
+            "https://gist.githubusercontent.com/rcorreia/" +
+                    "2362544/raw/3319e506e204af262d27f7ff9fca311e693dc342/" +
+                    "drag_and_drop_helper.js";
 
     @Visible
     @FindBy(id = "column-a")
@@ -44,7 +47,7 @@ public class DragAndDropPage extends BasePage<DragAndDropPage> {
      * @return a String containing the Javascript for JQuery (if not already present on the page)
      *         and code for simulating drag and drop.
      */
-    private String javascriptToSumiulateDragDrop() {
+    private String javascriptToSimulateDragDrop() {
         if (dragDropHelperJS.isEmpty()) {
             dragDropHelperJS = RestAssured.get(DRAG_DROP_HELPER_JS_URI).asString();
         }
@@ -61,7 +64,7 @@ public class DragAndDropPage extends BasePage<DragAndDropPage> {
      * @param to the JQuery selector for the target element where the from element will be dropped
      */
     private void simulateDragAndDrop(String from, String to) {
-        executeJS(javascriptToSumiulateDragDrop());
+        executeJS(javascriptToSimulateDragDrop());
         executeJS("$('" + from + "').simulateDragDrop({ dropTarget: '" + to + "'});");
     }
 
@@ -76,10 +79,8 @@ public class DragAndDropPage extends BasePage<DragAndDropPage> {
     }
 
     public List<String> getListOfHeadings() {
-        List<String> headings = new ArrayList<String>();
-        for (WebElement box : boxes) {
-            headings.add(box.getText());
-        }
-        return headings;
+        return boxes.stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
     }
 }

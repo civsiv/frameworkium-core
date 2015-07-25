@@ -9,10 +9,6 @@ public enum SystemProperty {
     DEVICE("device"),
     CAPTURE_URL("captureURL"),
     GRID_URL("gridURL"),
-    BUILD("build"),
-    APP_PATH("appPath"),
-    SAUCE("sauce"),
-    BROWSER_STACK("browserStack"),
     JIRA_URL("jiraURL"),
     ZAPI_RESULT_VERSION("zapiResultVersion"),
     ZAPI_CYCLE_REGEX("zapiCycleRegEx"),
@@ -21,7 +17,6 @@ public enum SystemProperty {
     SUT_VERSION("sutVersion"),
     JIRA_RESULT_FIELDNAME("jiraResultFieldName"),
     JIRA_RESULT_TRANSITION("jiraResultTransition");
-
 
     private String value;
 

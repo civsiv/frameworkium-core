@@ -9,7 +9,7 @@ import org.testng.SkipException;
 
 public class TestListener implements ITestListener {
 
-    static final Logger logger = LogManager.getLogger(TestListener.class);
+    private static final Logger logger = LogManager.getLogger(TestListener.class);
 
     @Override
     public void onTestStart(ITestResult result) {

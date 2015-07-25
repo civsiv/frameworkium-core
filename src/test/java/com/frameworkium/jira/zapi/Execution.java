@@ -70,13 +70,11 @@ public class Execution {
     }
 
     public void update(final int status, final String comment, final String attachment) {
-        if (null != idList) {
-            for (Integer executionId : idList) {
-                updateStatusAndComment(executionId, status, comment);
-                replaceExistingAttachment(attachment, executionId);
-                
-                logger.debug("ZAPI Updater - Updated %s to status %s", issue, status);
-            }
+        for (Integer executionId : idList) {
+            updateStatusAndComment(executionId, status, comment);
+            replaceExistingAttachment(attachment, executionId);
+
+            logger.debug("ZAPI Updater - Updated %s to status %s", issue, status);
         }
     }
 
@@ -91,8 +89,8 @@ public class Execution {
         JSONObject obj = new JSONObject();
         try {
             obj.put("status", String.valueOf(status));
-            //Limit on Zephyr's comment field capacity
-            if (comment.length()>750) {
+            // Limit on Zephyr's comment field capacity
+            if (comment.length() > 750) {
                 comment = comment.substring(0, 747) + "...";
             }
             obj.put("comment", comment);
@@ -100,7 +98,9 @@ public class Execution {
             logger.error("Update status and comment failed", e);
         }
 
-        given().contentType("application/json").and().body(obj).then().put("execution/" + executionId + "/execute");
+        given().contentType("application/json").and()
+                .body(obj).then()
+                .put("execution/" + executionId + "/execute");
     }
 
     private void deleteExistingAttachments(final Integer executionId) {

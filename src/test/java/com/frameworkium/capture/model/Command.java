@@ -20,24 +20,19 @@ public class Command {
         this.action = action;
 
         // TODO: Improve this. Use hacky solution in EventListener?
-        if (DriverType.isNative()) {
+        if (!(element.getAttribute("id")).isEmpty()) {
+            this.using = "id";
+            this.value = element.getAttribute("id");
+        } else if (!(element.getText()).isEmpty()) {
+            this.using = "linktext";
+            this.value = element.getText();
+        } else if (!element.getTagName().isEmpty()) {
+            this.using = "css";
+            this.value = element.getTagName() + "." + element.getAttribute("class");
+        } else {
+            // must be something weird
             this.using = "n/a";
             this.value = "n/a";
-        } else {
-            if (!(element.getAttribute("id")).isEmpty()) {
-                this.using = "id";
-                this.value = element.getAttribute("id");
-            } else if (!(element.getText()).isEmpty()) {
-                this.using = "linktext";
-                this.value = element.getText();
-            } else if (!element.getTagName().isEmpty()) {
-                this.using = "css";
-                this.value = element.getTagName() + "." + element.getAttribute("class");
-            } else {
-                // must be something weird
-                this.using = "n/a";
-                this.value = "n/a";
-            }
         }
     }
 

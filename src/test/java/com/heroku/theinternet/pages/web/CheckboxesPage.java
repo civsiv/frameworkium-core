@@ -1,7 +1,7 @@
 package com.heroku.theinternet.pages.web;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -17,23 +17,17 @@ public class CheckboxesPage extends BasePage<CheckboxesPage> {
 
     public CheckboxesPage checkAllCheckboxes() {
 
-        for (WebElement checkbox : allCheckboxes) {
-            if (!checkbox.isSelected()) {
-                checkbox.click();
-            }
-        }
+        allCheckboxes.stream()
+                .filter(checkbox -> !checkbox.isSelected())
+                .forEach(WebElement::click);
 
         return this;
     }
 
     public List<Boolean> getAllCheckboxCheckedStatus() {
 
-        List<Boolean> checkedStates = new ArrayList<Boolean>();
-
-        for (WebElement checkbox : allCheckboxes) {
-            checkedStates.add(checkbox.isSelected());
-        }
-
-        return checkedStates;
+        return allCheckboxes.stream()
+                .map(WebElement::isSelected)
+                .collect(Collectors.toList());
     }
 }

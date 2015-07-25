@@ -41,13 +41,10 @@ public class FileDownloadPage extends BasePage<FileDownloadPage> {
     }
 
     private WebElement findWebElementByText(String WebElementText) {
-
-        for (WebElement WebElement : allDownloadWebElements) {
-            if (WebElement.getText().equals(WebElementText)) {
-                return WebElement;
-            }
-        }
-        return null;
+        return allDownloadWebElements.stream()
+                .filter(w -> w.getText().equals(WebElementText))
+                .findFirst()
+                .orElse(null);
     }
 
     private long getSizeOfFileAtURL(String downloadURL) {

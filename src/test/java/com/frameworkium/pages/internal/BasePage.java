@@ -176,7 +176,7 @@ public abstract class BasePage<T extends BasePage<T>> {
      * @param javascript the Javascript to execute on the current page
      * @return Returns an Object returned by the Javascript provided
      */
-    public Object executeJS(String javascript) {
+    protected Object executeJS(String javascript) {
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
         return jsExecutor.executeScript(javascript);
     }

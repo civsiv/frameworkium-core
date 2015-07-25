@@ -33,7 +33,7 @@ public class ScreenshotCapture {
     public void takeAndSendScreenshot(
             Command command, WebDriver webdriver, String errorMessage) {
 
-        String url = DriverType.isNative() ? "" : webdriver.getCurrentUrl();
+        String url = webdriver.getCurrentUrl();
         TakesScreenshot ts = ((TakesScreenshot) webdriver);
         String screenshotBase64 = ts.getScreenshotAs(OutputType.BASE64);
         CreateScreenshot message = new CreateScreenshot(
@@ -50,7 +50,7 @@ public class ScreenshotCapture {
     }
 
     public static boolean isRequired() {
-        return SystemProperty.CAPTURE_URL.isSpecified() && !DriverType.isNative();
+        return SystemProperty.CAPTURE_URL.isSpecified();
     }
 
     private void initExecution(CreateExecution createExecutionMessage) {

@@ -31,7 +31,7 @@ import com.frameworkium.listeners.TestListener;
 public abstract class BaseTest {
 
     private static List<WebDriverWrapper> activeDrivers = Collections
-            .synchronizedList(new ArrayList<WebDriverWrapper>());
+            .synchronizedList(new ArrayList<>());
     private static ThreadLocal<WebDriverWrapper> driver;
     private static DriverType desiredDriverType = determineEffectiveDriverType();
     private static ThreadLocal<Boolean> requiresReset;
@@ -88,6 +88,17 @@ public abstract class BaseTest {
         userAgent = getUserAgent();
     }
 
+    private static String getUserAgent() {
+        String ua;
+        try {
+            ua = (String) getDriver().executeScript("return navigator.userAgent;");
+        } catch (Exception e) {
+            ua = "Unable to fetch UserAgent";
+        }
+        logger.debug("User agent is: '" + ua + "'");
+        return ua;
+    }
+
     @BeforeMethod(alwaysRun = true)
     public void initialiseNewScreenshotCapture(Method testMethod) {
         if (ScreenshotCapture.isRequired()) {
@@ -95,7 +106,7 @@ public abstract class BaseTest {
             try {
                 testID = testMethod.getAnnotation(Issue.class).value();
             } catch (NullPointerException e) {}
-            
+
             capture.set(new ScreenshotCapture(testID, driver.get()));
         }
     }
@@ -109,17 +120,6 @@ public abstract class BaseTest {
                 logger.warn("Session quit unexpectedly.", e);
             }
         }
-    }
-
-    public static String getUserAgent() {
-        String ua;
-        try {
-            ua = (String) getDriver().executeScript("return navigator.userAgent;");
-        } catch (Exception e) {
-            ua = "Unable to fetch UserAgent";
-        }
-        logger.debug("User agent is: '" + ua + "'");
-        return ua;
     }
 
     public static ScreenshotCapture getCapture() {

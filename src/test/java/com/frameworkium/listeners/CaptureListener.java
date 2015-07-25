@@ -53,11 +53,9 @@ public class CaptureListener implements WebDriverEventListener, ITestListener {
         logger.debug(String.format("highlightElementTakeScreenshotAndSendToCapture: action=%s", action));
         ElementHighlighter highlighter = null;
         try {
-            if (!DriverType.isNative()) {
-                logger.debug("Trying to highlight the element");
-                highlighter = new ElementHighlighter(driver);
-                highlighter.highlightElement(element);
-            }
+            logger.debug("Trying to highlight the element");
+            highlighter = new ElementHighlighter(driver);
+            highlighter.highlightElement(element);
             Command command = new Command(action, element);
             takeScreenshotAndSendToCapture(command, driver);
             if (null != highlighter) {

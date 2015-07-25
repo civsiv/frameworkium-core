@@ -1,6 +1,5 @@
 package com.frameworkium.config;
 
-import static com.frameworkium.config.SystemProperty.APP_PATH;
 import static com.frameworkium.config.SystemProperty.BROWSER_VERSION;
 import static com.frameworkium.config.SystemProperty.DEVICE;
 import static com.frameworkium.config.SystemProperty.GRID_URL;
@@ -122,11 +121,7 @@ public enum DriverType implements DriverSetup {
     public static DriverType determineEffectiveDriverType() {
         DriverType driverType = defaultDriverType;
         try {
-            if (isNative()) {
-                driverType = valueOf(SystemProperty.PLATFORM.getValue().toUpperCase());
-            } else {
-                driverType = valueOf(SystemProperty.BROWSER.getValue().toUpperCase());
-            }
+            driverType = valueOf(SystemProperty.BROWSER.getValue().toUpperCase());
         } catch (IllegalArgumentException ignored) {
             logger.warn("Unknown driver specified, defaulting to '" + driverType + "'...");
         } catch (NullPointerException ignored) {
@@ -139,10 +134,6 @@ public enum DriverType implements DriverSetup {
     public static boolean isMobile() {
         return "ios".equalsIgnoreCase(PLATFORM.getValue()) ||
                 "android".equalsIgnoreCase(PLATFORM.getValue());
-    }
-
-    public static boolean isNative() {
-        return APP_PATH.isSpecified();
     }
 
     public WebDriver instantiateWebDriver() throws MalformedURLException {
