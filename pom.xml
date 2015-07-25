@@ -34,7 +34,6 @@
     <browser/>
     <threads>1</threads>
     <groups/>
-    <aspectj.version>1.8.6</aspectj.version>
   </properties>
 
   <dependencies>
@@ -63,7 +62,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.4</version>
+      <version>6.9.6</version>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
@@ -98,7 +97,7 @@
     <dependency>
 	  <groupId>org.json</groupId>
 	  <artifactId>json</artifactId>
-	  <version>20140107</version>
+	  <version>20141113</version>
     </dependency>
     <dependency>
 	  <groupId>org.apache.commons</groupId>
@@ -154,15 +153,7 @@
               </includes>
               <groups>${groups}</groups>
               <testFailureIgnore>false</testFailureIgnore>
-              <argLine>-javaagent:'${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar'</argLine>
             </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectj.version}</version>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>

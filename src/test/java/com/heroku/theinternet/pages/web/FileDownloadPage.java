@@ -52,17 +52,14 @@ public class FileDownloadPage extends BasePage<FileDownloadPage> {
 
     private long getSizeOfFileAtURL(String downloadURL) {
 
-        InputStream inputStream = RestAssured.get(downloadURL).asInputStream();
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            IOUtils.copy(inputStream, byteArrayOutputStream);
+            return IOUtils.toByteArray(RestAssured.get(downloadURL).asInputStream()).length;
         } catch (IOException e) {
             logger.error("Failed to get size of the file: " + downloadURL, e);
+        } catch (NullPointerException e) {
+            return 0;  // most likely an empty file
         }
-        IOUtils.closeQuietly(byteArrayOutputStream);
-        IOUtils.closeQuietly(inputStream);
 
-        return byteArrayOutputStream.size();
+        return -1;
     }
 }

@@ -7,6 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import com.frameworkium.pages.internal.BasePage;
 import com.frameworkium.pages.internal.PageFactory;
 import com.frameworkium.pages.internal.Visible;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class JQueryUIMenuPage extends BasePage<JQueryUIMenuPage> {
 
@@ -28,6 +29,7 @@ public class JQueryUIMenuPage extends BasePage<JQueryUIMenuPage> {
         // Move mouse over the first figure to make caption visible
         (new Actions(driver)).moveToElement(enabledMenuItem).perform();
 
+        wait.until(ExpectedConditions.visibilityOf(backToJQueryUIMenuItem));
         backToJQueryUIMenuItem.click();
 
         // returns us a new page
@@ -40,9 +42,11 @@ public class JQueryUIMenuPage extends BasePage<JQueryUIMenuPage> {
         (new Actions(driver)).moveToElement(enabledMenuItem).perform();
 
         // Move mouse over the first figure to make caption visible
+        wait.until(ExpectedConditions.visibilityOf(downloadsMenuItem));
         (new Actions(driver)).moveToElement(downloadsMenuItem).perform();
 
         // Return link url (href) from the now-visible item
+        wait.until(ExpectedConditions.visibilityOf(excelFileMenuItem));
         return excelFileMenuItem.getAttribute("href");
     }
 
