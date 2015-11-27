@@ -96,7 +96,11 @@ public class DriverSetup {
      * @return - True/False to whether to use a remote driver
      */
     public static boolean useRemoteDriver() {
-        return GRID_URL.isSpecified() || Sauce.isDesired() || BrowserStack.isDesired();
+        if (returnBrowserType() == SupportedBrowsers.ELECTRON) {
+            return false;
+        } else {
+            return GRID_URL.isSpecified() || Sauce.isDesired() || BrowserStack.isDesired();
+        }
     }
 
     /**
