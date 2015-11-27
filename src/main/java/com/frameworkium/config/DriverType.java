@@ -134,7 +134,7 @@ public abstract class DriverType {
      * Method to tear down the driver object, can be overridden
      */
     public void tearDownDriver() {
-        this.webDriverWrapper.getWrappedDriver().quit();
+        this.webDriverWrapper.quit();
     }
 
     /**
