@@ -87,14 +87,14 @@ public class ScreenshotListener extends TestListenerAdapter {
 
     @Override
     public void onTestFailure(ITestResult failingTest) {
-        if (BROWSER.getValue().toLowerCase().equals("electron")) {
+        if (!BROWSER.getValue().toLowerCase().equals("electron")) {
             takeScreenshot(failingTest.getName());
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult skippedTest) {
-        if (BROWSER.getValue().toLowerCase().equals("electron")) {
+        if (!BROWSER.getValue().toLowerCase().equals("electron")) {
             takeScreenshot(skippedTest.getName());
         }
     }
