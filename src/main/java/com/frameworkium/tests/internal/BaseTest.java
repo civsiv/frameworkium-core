@@ -12,7 +12,6 @@ import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.remote.SessionId;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -162,9 +161,10 @@ public abstract class BaseTest implements SauceOnDemandSessionIdProvider, SauceO
     /** @return the Job id for the current thread */
     @Override
     public String getSessionId() {
-        WebDriverWrapper driver = getDriver();
-        SessionId sessionId = driver.getWrappedRemoteWebDriver().getSessionId();
-        return (sessionId == null) ? null : sessionId.toString();
+        //WebDriverWrapper driver = getDriver();
+        //SessionId sessionId = driver.getWrappedRemoteWebDriver().getSessionId();
+        //return (sessionId == null) ? null : sessionId.toString();
+        return "";
     }
 
     /**
