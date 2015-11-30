@@ -5,15 +5,19 @@ import com.frameworkium.config.WebDriverWrapper;
 import com.frameworkium.tests.internal.BaseTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.Augmenter;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import ru.yandex.qatools.allure.annotations.Attachment;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static com.frameworkium.config.SystemProperty.BROWSER;
 
 public class ScreenshotListener extends TestListenerAdapter {
 
@@ -39,16 +43,16 @@ public class ScreenshotListener extends TestListenerAdapter {
     }
 
     @Attachment(value = "Screenshot on failure", type = "image/png")
-    private byte[] writeScreenshotToFile(File screenshot) {
+    private byte[] writeScreenshotToFile(WebDriver driver, File screenshot) {
         try {
-            BufferedImage image = new Robot().createScreenCapture(
-                    new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())
-            );
-            ImageIO.write(image, "jpg", screenshot);
-        } catch (AWTException e) {
-            logger.error("Unable to take screenshot: " + e.toString());
+            FileOutputStream screenshotStream = new FileOutputStream(screenshot);
+            byte[] bytes = ((TakesScreenshot) driver)
+                    .getScreenshotAs(OutputType.BYTES);
+            screenshotStream.write(bytes);
+            screenshotStream.close();
+            return bytes;
         } catch (IOException e) {
-            logger.error("Unable to write screenshot to file:" + screenshot.getAbsolutePath());
+            logger.error("Unable to write " + screenshot.getAbsolutePath(), e);
         }
         return null;
     }
@@ -66,7 +70,11 @@ public class ScreenshotListener extends TestListenerAdapter {
                 File screenshot = new File(absolutePath);
                 if (createFile(screenshot)) {
                     WebDriverWrapper driver = BaseTest.getDriver();
-                    writeScreenshotToFile(screenshot);
+                    try {
+                        writeScreenshotToFile(driver, screenshot);
+                    } catch (ClassCastException weNeedToAugmentOurDriverObject) {
+                        writeScreenshotToFile(new Augmenter().augment(driver), screenshot);
+                    }
                     logger.info("Written screenshot to " + absolutePath);
                 } else {
                     logger.error("Unable to create " + absolutePath);
@@ -79,11 +87,15 @@ public class ScreenshotListener extends TestListenerAdapter {
 
     @Override
     public void onTestFailure(ITestResult failingTest) {
-        takeScreenshot(failingTest.getName());
+        if (BROWSER.getValue().toLowerCase().equals("electron")) {
+            takeScreenshot(failingTest.getName());
+        }
     }
 
     @Override
     public void onTestSkipped(ITestResult skippedTest) {
-        takeScreenshot(skippedTest.getName());
+        if (BROWSER.getValue().toLowerCase().equals("electron")) {
+            takeScreenshot(skippedTest.getName());
+        }
     }
 }
