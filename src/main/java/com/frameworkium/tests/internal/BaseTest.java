@@ -17,6 +17,8 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Listeners;
+import ru.yandex.qatools.allure.annotations.Issue;
+import ru.yandex.qatools.allure.annotations.TestCaseId;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -89,7 +91,7 @@ public abstract class BaseTest implements SauceOnDemandSessionIdProvider, SauceO
      * @param testMethod - Test method passed from the test script
      */
     private static void initialiseNewScreenshotCapture(Method testMethod) {
-        /*if (ScreenshotCapture.isRequired()) {
+        if (ScreenshotCapture.isRequired()) {
             String testID = "n/a";
             try {
                 testID = testMethod.getName();
@@ -107,7 +109,7 @@ public abstract class BaseTest implements SauceOnDemandSessionIdProvider, SauceO
                 logger.debug("No Test Case ID defined.");
             }
             capture.set(new ScreenshotCapture(testID, driverType.get().getDriver()));
-        }*/
+        }
     }
 
     /**
@@ -116,7 +118,7 @@ public abstract class BaseTest implements SauceOnDemandSessionIdProvider, SauceO
     private static void configureDriverBasedOnParams() {
         requiresReset.set(driverType.get().resetBrowser(requiresReset.get()));
         driverType.get().maximiseBrowserWindow();
-        setUserAgent();
+        //setUserAgent();
     }
 
     /**

@@ -121,7 +121,7 @@ public abstract class DriverType {
     public void maximiseBrowserWindow() {
         if (!MAXIMISE.isSpecified() || Boolean.parseBoolean(MAXIMISE.getValue())) {
             if (!useRemoteDriver() && !isNative() || GRID_URL.isSpecified()) {
-                this.webDriverWrapper.manage().window().maximize();
+                //this.webDriverWrapper.manage().window().maximize();
             }
         }
     }
