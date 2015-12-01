@@ -122,7 +122,7 @@ public abstract class BaseTest implements SauceOnDemandSessionIdProvider, SauceO
     private static void configureDriverBasedOnParams() {
         requiresReset.set(driverType.get().resetBrowser(requiresReset.get()));
         driverType.get().maximiseBrowserWindow();
-        //setUserAgent();
+        setUserAgent();
     }
 
     /**
