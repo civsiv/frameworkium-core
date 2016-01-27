@@ -7,6 +7,9 @@ package com.frameworkium.services;
 public class MockExampleService {
 
 
+    public void getName(){
+    }
+
 
 
 }
